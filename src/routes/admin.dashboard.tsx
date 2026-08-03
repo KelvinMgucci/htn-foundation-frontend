@@ -114,9 +114,7 @@ function NewsManager() {
       <h2 className="text-2xl font-bold text-teal mb-6">Add News Article</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-teal mb-2">
-            Title
-          </label>
+          <label className="block text-sm font-semibold text-teal mb-2">Title</label>
           <input
             type="text"
             value={title}
@@ -127,9 +125,7 @@ function NewsManager() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-teal mb-2">
-            Content
-          </label>
+          <label className="block text-sm font-semibold text-teal mb-2">Content</label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -196,9 +192,7 @@ function ProgramManager() {
       <h2 className="text-2xl font-bold text-teal mb-6">Add Program</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-teal mb-2">
-            Program Name
-          </label>
+          <label className="block text-sm font-semibold text-teal mb-2">Program Name</label>
           <input
             type="text"
             value={title}
@@ -209,9 +203,7 @@ function ProgramManager() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-teal mb-2">
-            Description
-          </label>
+          <label className="block text-sm font-semibold text-teal mb-2">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
