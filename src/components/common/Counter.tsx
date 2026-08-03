@@ -10,7 +10,7 @@ type CounterProps = {
 /** Animated count-up that respects reduced-motion preferences. */
 export function Counter({ value, suffix = "", duration = 1800 }: CounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const inView = useInView(ref, { once: true });
   const reduce = useReducedMotion();
   const [display, setDisplay] = useState(0);
 
