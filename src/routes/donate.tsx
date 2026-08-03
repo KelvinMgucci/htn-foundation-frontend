@@ -7,6 +7,7 @@ import { CtaButton } from "@/components/common/Cta";
 import { Reveal } from "@/components/common/Reveal";
 import { PageHero } from "@/components/layout/PageHero";
 import { ORG } from "@/constants/site";
+import { postJson } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/donate")({
@@ -138,11 +139,13 @@ const donorSchema = z.object({
     .trim()
     .email("Please enter a valid email address.")
     .max(255),
+  phone: z.string().trim().max(30).optional(),
+  paymentMethod: z.string().trim().min(1, "Please choose a payment method."),
   message: z.string().trim().max(500).optional(),
 });
 
 type DonorFields = z.infer<typeof donorSchema>;
-const emptyDonor: DonorFields = { fullName: "", email: "", message: "" };
+const emptyDonor: DonorFields = { fullName: "", email: "", phone: undefined, paymentMethod: "", message: undefined };
 
 const fieldBase =
   "w-full rounded-2xl border border-input bg-background px-4 py-3 text-[0.98rem] text-foreground placeholder:text-muted-foreground/70 transition-colors focus-visible:border-mint";
@@ -163,7 +166,7 @@ function DonationForm() {
   const effectiveAmount = customAmount !== "" ? Number(customAmount) : amount;
 
   const set =
-    (key: keyof DonorFields) => (e: { target: { value: string } }) => {
+    (key: keyof DonorFields) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
       setValues((v) => ({ ...v, [key]: e.target.value }));
       setErrors((prev) => ({ ...prev, [key]: undefined }));
     };
@@ -201,9 +204,19 @@ function DonationForm() {
 
     setState("sending");
     try {
-      await new Promise((r) => setTimeout(r, 900));
+      await postJson("/donations", {
+        amount: effectiveAmount,
+        currency: "USD",
+        paymentMethod: values.paymentMethod,
+        donorEmail: values.email,
+        donorName: values.fullName,
+        donorPhone: values.phone || undefined,
+        message: values.message || undefined,
+      });
       setState("sent");
       setValues(emptyDonor);
+      setAmount(50);
+      setCustomAmount("");
     } catch {
       setState("failed");
     }
@@ -221,9 +234,7 @@ function DonationForm() {
           </span>
           <h3 className="display-3 mt-6">Thank you for your generosity</h3>
           <p className="lede mt-3 max-w-md">
-            Your intent to give {frequency === "monthly" ? "monthly" : ""} has
-            been recorded. Our team will follow up by email to confirm your gift
-            and complete payment.
+            Your donation of {frequency === "monthly" ? "monthly " : ""}${effectiveAmount.toLocaleString()} has been recorded. Our team will follow up by email to confirm your gift and complete payment.
           </p>
           <CtaButton
             type="button"
@@ -386,6 +397,68 @@ function DonationForm() {
             ) : null}
           </div>
 
+          <div>
+            <label htmlFor="phone" className="text-sm font-semibold text-teal">
+              Phone (optional)
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              value={values.phone}
+              onChange={set("phone")}
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? "phone-error" : undefined}
+              className={cn(
+                fieldBase,
+                "mt-2",
+                errors.phone && "border-destructive",
+              )}
+            />
+            {errors.phone ? (
+              <p id="phone-error" className="mt-1.5 text-xs text-destructive">
+                {errors.phone}
+              </p>
+            ) : null}
+          </div>
+
+          <div>
+            <label
+              htmlFor="paymentMethod"
+              className="text-sm font-semibold text-teal"
+            >
+              Payment method
+            </label>
+            <select
+              id="paymentMethod"
+              required
+              value={values.paymentMethod}
+              onChange={set("paymentMethod")}
+              aria-invalid={Boolean(errors.paymentMethod)}
+              aria-describedby={errors.paymentMethod ? "paymentMethod-error" : undefined}
+              className={cn(
+                fieldBase,
+                "mt-2",
+                errors.paymentMethod && "border-destructive",
+              )}
+            >
+              <option value="" disabled>
+                Choose a payment method
+              </option>
+              <option value="MPESA_MANUAL">M-Pesa</option>
+              <option value="NMB_MANUAL">NMB Bank</option>
+            </select>
+            {errors.paymentMethod ? (
+              <p
+                id="paymentMethod-error"
+                className="mt-1.5 text-xs text-destructive"
+              >
+                {errors.paymentMethod}
+              </p>
+            ) : null}
+          </div>
+
           <div className="sm:col-span-2">
             <label
               htmlFor="message"
@@ -432,9 +505,8 @@ function DonationForm() {
         </div>
 
         <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-          *This form records your intent to give for design-preview purposes.
-          Secure online payment processing will be connected once merchant
-          details are finalised; our team will follow up to complete your gift.
+          *Your donation will be processed via your selected payment method.
+          Our team will follow up by email to confirm your gift.
         </p>
       </form>
     </Reveal>

@@ -15,6 +15,8 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as PartnershipsRouteImport } from './routes/partnerships'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as ProgramsIndexRouteImport } from './routes/programs/index'
 import { Route as ProgramsSlugRouteImport } from './routes/programs/$slug'
 
@@ -48,6 +50,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgramsIndexRoute = ProgramsIndexRouteImport.update({
   id: '/programs/',
   path: '/programs/',
@@ -66,6 +78,8 @@ export interface FileRoutesByFullPath {
   '/donate': typeof DonateRoute
   '/partnerships': typeof PartnershipsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/programs/': typeof ProgramsIndexRoute
 }
@@ -76,6 +90,8 @@ export interface FileRoutesByTo {
   '/donate': typeof DonateRoute
   '/partnerships': typeof PartnershipsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/programs': typeof ProgramsIndexRoute
 }
@@ -87,6 +103,8 @@ export interface FileRoutesById {
   '/donate': typeof DonateRoute
   '/partnerships': typeof PartnershipsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/programs/': typeof ProgramsIndexRoute
 }
@@ -99,6 +117,8 @@ export interface FileRouteTypes {
     | '/donate'
     | '/partnerships'
     | '/sitemap.xml'
+    | '/admin/dashboard'
+    | '/admin/login'
     | '/programs/$slug'
     | '/programs/'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +129,8 @@ export interface FileRouteTypes {
     | '/donate'
     | '/partnerships'
     | '/sitemap.xml'
+    | '/admin/dashboard'
+    | '/admin/login'
     | '/programs/$slug'
     | '/programs'
   id:
@@ -119,6 +141,8 @@ export interface FileRouteTypes {
     | '/donate'
     | '/partnerships'
     | '/sitemap.xml'
+    | '/admin/dashboard'
+    | '/admin/login'
     | '/programs/$slug'
     | '/programs/'
   fileRoutesById: FileRoutesById
@@ -130,6 +154,8 @@ export interface RootRouteChildren {
   DonateRoute: typeof DonateRoute
   PartnershipsRoute: typeof PartnershipsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   ProgramsSlugRoute: typeof ProgramsSlugRoute
   ProgramsIndexRoute: typeof ProgramsIndexRoute
 }
@@ -178,6 +204,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/programs/': {
       id: '/programs/'
       path: '/programs'
@@ -202,6 +242,8 @@ const rootRouteChildren: RootRouteChildren = {
   DonateRoute: DonateRoute,
   PartnershipsRoute: PartnershipsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLoginRoute: AdminLoginRoute,
   ProgramsSlugRoute: ProgramsSlugRoute,
   ProgramsIndexRoute: ProgramsIndexRoute,
 }
