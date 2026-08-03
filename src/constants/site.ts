@@ -35,6 +35,7 @@ export const NAV_LINKS = [
   { label: "Programs", to: "/programs" },
   { label: "Partnerships", to: "/partnerships" },
   { label: "Contact", to: "/contact" },
+  { label: "Admin", to: "/admin/login" },
 ] as const;
 
 export const IMPACT_STATS = [
