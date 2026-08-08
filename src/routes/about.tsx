@@ -224,7 +224,7 @@ function AboutPage() {
                     height={480}
                     loading="lazy"
                     alt={`${person.name}, ${person.role} at HTN Foundation`}
-                    className="aspect-4/3 w-full object-cover"
+                    className="aspect-4/3 w-full object-cover object-[center_20%]"
                   />
                 ) : (
                   <div
