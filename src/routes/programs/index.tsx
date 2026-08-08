@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import campImage from "@/assets/medical-camp.jpg";
+import campImage from "@/assets/medical-camp.png";
 import { ImpactRibbon } from "@/components/common/ImpactRibbon";
 import { ProgramCard } from "@/components/common/ProgramCard";
 import { Reveal, Stagger, StaggerItem } from "@/components/common/Reveal";

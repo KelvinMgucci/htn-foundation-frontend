@@ -217,17 +217,28 @@ function AboutPage() {
           {LEADERSHIP.map((person) => (
             <StaggerItem key={person.name} className="h-full">
               <article className="card-soft h-full overflow-hidden">
-                <div
-                  aria-hidden="true"
-                  className="grid aspect-4/3 place-items-center bg-linear-to-br from-mint-soft to-sand"
-                >
-                  <span className="font-display text-4xl text-teal/40">
-                    {person.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </span>
-                </div>
+                {"photo" in person && person.photo ? (
+                  <img
+                    src={person.photo}
+                    width={640}
+                    height={480}
+                    loading="lazy"
+                    alt={`${person.name}, ${person.role} at HTN Foundation`}
+                    className="aspect-4/3 w-full object-cover"
+                  />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className="grid aspect-4/3 place-items-center bg-linear-to-br from-mint-soft to-sand"
+                  >
+                    <span className="font-display text-4xl text-teal/40">
+                      {person.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </span>
+                  </div>
+                )}
                 <div className="p-7">
                   <h3 className="display-3 text-[1.2rem]">{person.name}</h3>
                   <p className="mt-1 text-sm font-semibold uppercase tracking-[0.12em] text-teal-soft">

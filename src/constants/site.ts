@@ -9,10 +9,13 @@ import {
   Users,
 } from "lucide-react";
 
-import cliniciansImage from "@/assets/clinicians.jpg";
+import cliniciansImage from "@/assets/clinicians.png";
+import drEmmanuelKimeiPhoto from "@/assets/Dr-Emmanuel-Kimei.png";
+import drHamaroRevocatusPhoto from "@/assets/Dr-Hamaro-Revocatus.jpg";
+import drNicholausSwaiPhoto from "@/assets/Dr-Nicholaus-Swai.png";
 import healthEducationImage from "@/assets/health-education.jpg";
 import heroCommunityHealthImage from "@/assets/hero-community-health.jpg";
-import medicalCampImage from "@/assets/medical-camp.jpg";
+import medicalCampImage from "@/assets/medical-camp.png";
 
 export const ORG = {
   name: "HTN Foundation",
@@ -336,19 +339,22 @@ export const TIMELINE = [
 
 export const LEADERSHIP = [
   {
-    name: "Dr. A. Mwakalinga",
+    name: "Dr. Emmanuel Kimei",
     role: "Executive Director",
     bio: "Public health physician with two decades of district health system experience.",
+    photo: drEmmanuelKimeiPhoto,
   },
   {
-    name: "N. Kileo",
+    name: "Dr. Nicholaus Swai",
     role: "Director of Programmes",
     bio: "Leads outreach design, delivery quality and community engagement.",
+    photo: drNicholausSwaiPhoto,
   },
   {
-    name: "Dr. S. Massawe",
+    name: "Dr. Hamaro Revocatus",
     role: "Clinical Lead",
     bio: "Oversees clinical standards, camp protocols and referral pathways.",
+    photo: drHamaroRevocatusPhoto,
   },
   {
     name: "J. Bura",

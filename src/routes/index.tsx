@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { ShieldCheck, LineChart, Users, Handshake, Quote } from "lucide-react";
 
 import heroImage from "@/assets/hero-community-health.jpg";
-import cliniciansImage from "@/assets/clinicians.jpg";
+import cliniciansImage from "@/assets/clinicians.png";
 import { CtaLink } from "@/components/common/Cta";
 import { ImpactRibbon } from "@/components/common/ImpactRibbon";
 import { LogoMarquee } from "@/components/common/LogoMarquee";
