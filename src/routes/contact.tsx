@@ -1,13 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
-import { Clock, Loader2, Mail, MapPin, Phone, Send } from "lucide-react";
+import { useState } from "react";
+import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import { z } from "zod";
 
 import { CtaButton, CtaLink } from "@/components/common/Cta";
 import { Reveal } from "@/components/common/Reveal";
 import { PageHero } from "@/components/layout/PageHero";
 import { ORG } from "@/constants/site";
-import { postJson } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/contact")({
@@ -206,7 +205,7 @@ function ContactForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof Fields, string>>>(
     {},
   );
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "failed">(
+  const [state, setState] = useState<"idle" | "sent">(
     "idle",
   );
 
@@ -215,7 +214,7 @@ function ContactForm() {
     setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(values);
     if (!parsed.success) {
@@ -225,25 +224,19 @@ function ContactForm() {
         if (!next[key]) next[key] = issue.message;
       }
       setErrors(next);
-      setState("idle");
       return;
     }
 
-    setState("sending");
-    try {
-      await postJson("/contact/message", {
-        name: parsed.data.fullName,
-        email: parsed.data.email,
-        phone: parsed.data.phone || undefined,
-        organization: parsed.data.organization || undefined,
-        subject: parsed.data.subject,
-        message: parsed.data.message,
-      });
-      setState("sent");
-      setValues(empty);
-    } catch {
-      setState("failed");
-    }
+    // Build email body
+    const emailBody = `Name: ${parsed.data.fullName}
+Email: ${parsed.data.email}
+${parsed.data.phone ? `Phone: ${parsed.data.phone}\n` : ""}${parsed.data.organization ? `Organization: ${parsed.data.organization}\n` : ""}\nMessage:\n${parsed.data.message}`;
+    
+    // Open email client
+    window.location.href = `mailto:${ORG.email}?subject=${encodeURIComponent(parsed.data.subject)}&body=${encodeURIComponent(emailBody)}`;
+    
+    setState("sent");
+    setValues(empty);
   };
 
   const field = (
@@ -339,25 +332,15 @@ function ContactForm() {
             type="submit"
             variant="primary"
             size="lg"
-            disabled={state === "sending"}
           >
-            {state === "sending" ? (
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            ) : (
-              <Send className="size-4" aria-hidden="true" />
-            )}
-            {state === "sending" ? "Sending…" : "Submit enquiry"}
+            <Send className="size-4" aria-hidden="true" />
+            Send via Email
           </CtaButton>
 
           <p role="status" aria-live="polite" className="text-sm">
             {state === "sent" ? (
               <span className="text-teal">
-                Thank you — your message has been received. We&rsquo;ll reply
-                within two working days.
-              </span>
-            ) : state === "failed" ? (
-              <span className="text-destructive">
-                Something went wrong. Please email {ORG.email} directly.
+                Opening your email client...
               </span>
             ) : null}
           </p>

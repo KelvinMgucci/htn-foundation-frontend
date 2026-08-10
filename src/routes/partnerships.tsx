@@ -8,7 +8,6 @@ import {
   Globe2,
   Handshake,
   Layers,
-  Loader2,
   Repeat,
   Send,
 } from "lucide-react";
@@ -22,7 +21,6 @@ import { SectionHeading } from "@/components/common/SectionHeading";
 import { PageHero } from "@/components/layout/PageHero";
 import { ClosingCta } from "@/components/sections/ClosingCta";
 import { ORG, PARTNER_CATEGORIES, PARTNER_LOGOS } from "@/constants/site";
-import { postJson } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/partnerships")({
@@ -235,7 +233,7 @@ function PartnerApplicationForm() {
   const [errors, setErrors] = useState<
     Partial<Record<keyof PartnerFields, string>>
   >({});
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "failed">(
+  const [state, setState] = useState<"idle" | "submitting" | "sent">(
     "idle",
   );
 
@@ -245,7 +243,7 @@ function PartnerApplicationForm() {
       setErrors((prev) => ({ ...prev, [key]: undefined }));
     };
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const parsed = partnerSchema.safeParse(values);
     if (!parsed.success) {
@@ -255,18 +253,27 @@ function PartnerApplicationForm() {
         if (!next[key]) next[key] = issue.message;
       }
       setErrors(next);
-      setState("idle");
       return;
     }
 
-    setState("sending");
-    try {
-      await postJson("/partnerships/apply", parsed.data);
+    // Build email body
+    const emailBody = `Organization: ${parsed.data.organization}
+Contact Name: ${parsed.data.contactName}
+Email: ${parsed.data.email}
+Category: ${parsed.data.category}
+
+Proposed Collaboration:
+${parsed.data.message}`;
+    
+    setState("submitting");
+    
+    // Open email client
+    window.location.href = `mailto:${ORG.email}?subject=${encodeURIComponent(`Partnership Enquiry - ${parsed.data.category}`)}&body=${encodeURIComponent(emailBody)}`;
+    
+    setTimeout(() => {
       setState("sent");
       setValues(emptyPartner);
-    } catch {
-      setState("failed");
-    }
+    }, 1500);
   };
 
   if (state === "sent") {
@@ -474,25 +481,18 @@ function PartnerApplicationForm() {
             type="submit"
             variant="primary"
             size="lg"
-            disabled={state === "sending"}
           >
-            {state === "sending" ? (
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            ) : (
-              <Send className="size-4" aria-hidden="true" />
-            )}
-            {state === "sending" ? "Sending…" : "Submit enquiry"}
+            <Send className="size-4" aria-hidden="true" />
+            Send via Email
           </CtaButton>
 
-          {state === "failed" ? (
-            <p
-              role="status"
-              aria-live="polite"
-              className="text-sm text-destructive"
-            >
-              Something went wrong. Please email {ORG.email} directly.
-            </p>
-          ) : null}
+          <p role="status" aria-live="polite" className="text-sm">
+            {state === "submitting" ? (
+              <span className="text-teal">
+                Opening your email client...
+              </span>
+            ) : null}
+          </p>
         </div>
       </form>
     </Reveal>
