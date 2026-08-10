@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Smartphone, Building2, Copy, Check, Loader2, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import { Smartphone, Building2, Copy, Check, ShieldCheck } from "lucide-react";
 
 import { Reveal } from "@/components/common/Reveal";
 import { PageHero } from "@/components/layout/PageHero";
@@ -36,13 +36,6 @@ interface PaymentOption {
   accountNumber: string;
   accountName: string;
   instructions: string;
-  isActive: boolean;
-}
-
-interface PaymentMethods {
-  stripe?: PaymentOption;
-  mpesa?: PaymentOption;
-  nmb?: PaymentOption;
 }
 
 function DonatePage() {
@@ -66,51 +59,22 @@ function DonatePage() {
 }
 
 function CollectionAccounts() {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethods | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPaymentMethods = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/donations/payment-methods");
-        if (!response.ok) throw new Error("Failed to fetch payment methods");
-        const data = await response.json();
-        setPaymentMethods(data);
-      } catch (err) {
-        setError("Unable to load payment methods. Please try again later.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPaymentMethods();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-8 animate-spin text-teal" aria-hidden="true" />
-        <span className="sr-only">Loading payment methods...</span>
-      </div>
-    );
-  }
-
-  if (error || !paymentMethods) {
-    return (
-      <div className="mx-auto max-w-2xl rounded-4xl border border-border bg-background p-10 text-center">
-        <p className="text-muted-foreground">{error || "No payment methods available."}</p>
-        <p className="mt-4 text-sm text-muted-foreground">
-          Please contact us at{" "}
-          <a href={`mailto:${ORG.email}`} className="text-teal hover:underline">
-            {ORG.email}
-          </a>{" "}
-          for donation information.
-        </p>
-      </div>
-    );
-  }
+  const paymentMethods: PaymentOption[] = [
+    {
+      method: "MPESA_MANUAL",
+      displayName: "M-Pesa",
+      accountNumber: "0768477893",
+      accountName: "Kelvin Lingo",
+      instructions: "Send funds to 0768477893",
+    },
+    {
+      method: "NMB_MANUAL",
+      displayName: "NMB Bank",
+      accountNumber: "1234567890",
+      accountName: "Kelvin Lingo",
+      instructions: "Transfer to NMB Bank Account 1234567890",
+    },
+  ];
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -124,25 +88,15 @@ function CollectionAccounts() {
       </Reveal>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {paymentMethods.mpesa && paymentMethods.mpesa.isActive && (
-          <Reveal delay={0.1}>
+        {paymentMethods.map((option, index) => (
+          <Reveal key={option.method} delay={index * 0.1}>
             <AccountCard
-              icon={<Smartphone className="size-6" strokeWidth={1.6} />}
-              option={paymentMethods.mpesa}
-              accentColor="teal"
+              icon={option.method === "MPESA_MANUAL" ? <Smartphone className="size-6" strokeWidth={1.6} /> : <Building2 className="size-6" strokeWidth={1.6} />}
+              option={option}
+              accentColor={option.method === "MPESA_MANUAL" ? "teal" : "mint"}
             />
           </Reveal>
-        )}
-
-        {paymentMethods.nmb && paymentMethods.nmb.isActive && (
-          <Reveal delay={0.2}>
-            <AccountCard
-              icon={<Building2 className="size-6" strokeWidth={1.6} />}
-              option={paymentMethods.nmb}
-              accentColor="mint"
-            />
-          </Reveal>
-        )}
+        ))}
       </div>
 
       <Reveal delay={0.3}>
